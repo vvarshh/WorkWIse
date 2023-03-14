@@ -2,6 +2,7 @@
     <TeamPage/>
 </template>
 
+<router-view/>
 <script>
 import TeamPage from './components/TeamPage.vue'
 
