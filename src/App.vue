@@ -1,17 +1,40 @@
+
+
 <template>
-    <TeamPage/>
-</template>
-
+  <nav>
+    <router-link to="/"> Home </router-link> |
+    <router-link to="/feed"> Feed </router-link> |
+    <router-link to="/register"> Register </router-link> |
+    <router-link to="/sign-in"> Login </router-link> |
+    <button @click="handleSignOut" v-if="isLoggedIn">Sign out
+    </button>
+  </nav>
 <router-view/>
+</template>
+ 
 <script>
-import TeamPage from './components/TeamPage.vue'
+import { onMounted, ref } from 'vue';
+import { getAuth, onAuthStateChanged, signOut} from "firebase/auth";
+const isLoggedIn = ref(false);
+let auth; 
+onMounted(() => { 
+  auth = getAuth(); 
+  onAuthStateChanged(auth, (user) => { 
+    if (user) {
+      isLoggedIn.value = true; 
+    } else { 
+      isLoggedIn.value = false; 
+    }
+  });
 
-export default {
-  name: 'App',
-  components: {
-    TeamPage
-  }
-}
+});
+ const handleSignOut = () => { 
+   signOut(auth).then(() => { 
+     router.push("/");
+
+   });
+ };
+
 </script>
 
 <style>
