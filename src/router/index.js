@@ -19,10 +19,10 @@ const router = createRouter({
 
 const getCurrentUser = () => { 
     return new Promise((resolve,reject) => {
-        const removeLister = onAuthStateChanged(
+        const removeListener = onAuthStateChanged(
             getAuth(),
             (user) => { 
-                removeLister(); 
+                removeListener(); 
                 resolve(user);
             },
             reject
