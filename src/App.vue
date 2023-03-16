@@ -1,55 +1,48 @@
 
 
 <template>
-  <nav>
-    <router-link to="/"> Home </router-link> |
-    <router-link to="/feed"> Feed </router-link> |
-    <router-link to="/register"> Register </router-link> |
-    <router-link to="/sign-in"> Login </router-link> |
-    <button @click="handleSignOut" v-if="isLoggedIn">Sign out
-    </button>
-  </nav>
-<router-view/>
+  <div id="nav" v-if="$store.state.user">
+    <router-link to="/">Home</router-link> |
+    <router-link to="/about">About</router-link>
+    <button @click="$store.dispatch('logout')">Logout</button>
+  </div>
+  <router-view/>
 </template>
- 
+
 <script>
-import { onMounted, ref } from 'vue';
-import { getAuth, onAuthStateChanged, signOut} from "firebase/auth";
-const isLoggedIn = ref(false);
-let auth; 
-onMounted(() => { 
-  auth = getAuth(); 
-  onAuthStateChanged(auth, (user) => { 
-    if (user) {
-      isLoggedIn.value = true; 
-    } else { 
-      isLoggedIn.value = false; 
-    }
-  });
-
-});
- const handleSignOut = () => { 
-   signOut(auth).then(() => { 
-     router.push("/");
-
-   });
- };
-
+import { onBeforeMount } from 'vue'
+import { useStore } from 'vuex'
+export default {
+  setup() {
+    const store = useStore()
+    onBeforeMount(() => {
+      store.dispatch('fetchUser')
+    })
+  }
+}
 </script>
 
 <style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 #app {
-  -webkit-font-smoothing: antialised;
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  background-color:#ebf0f7;
-  margin-top: 30px;
-  display: inline
+  color: #2c3e50;
 }
-
-@media (min-width: 1024px) {
-  #app {
-    padding: 0 2rem;
-  }
+#nav {
+  padding: 30px;
+}
+#nav a {
+  font-weight: bold;
+  color: #2c3e50;
+}
+#nav a.router-link-exact-active {
+  color: #42b983;
 }
 </style>

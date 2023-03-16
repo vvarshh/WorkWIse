@@ -1,8 +1,7 @@
 import { initializeApp } from "firebase/app";
-import { createApp } from "vue";
-import router from "./router";
-import App from "./App.vue";
-import './assets/main.css'
+import { getAuth } from "firebase/auth"
+
+//import './assets/main.css'
 
 
 const firebaseConfig = {
@@ -15,10 +14,9 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-const firebaseApp = initializeApp(firebaseConfig);
-const app = createApp(App);
+const app = initializeApp(firebaseConfig)
 
-app.mount("#app");
+const auth = getAuth(app)
 
-app.use(router);
-export default firebaseApp;
+export { auth }
+

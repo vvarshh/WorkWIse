@@ -1,48 +1,49 @@
-import { createRouter, createWebHistory } from "vue-router";
+import { createRouter, createWebHistory } from 'vue-router'
+import Home from '../views/Home.vue';
+import Login from '../views/Login.vue';
+import { auth } from '../firebase/index.js';
+
+const routes = [
+  {
+    path: '/',
+    name: 'Home',
+    component: Home,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/about',
+    name: 'About',
+    component: () => import('../views/About.vue'),
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/login',
+    name: 'Login',
+    component: Login
+  }
+]
 
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHistory(process.env.BASE_URL),
+  routes
+})
 
-  routes: [
-    { path: "/", component: () => import("../views/Home.vue") },
-    { path: "/registeR", component: () => import("../views/Register.vue") },
-    { path: "/sign-in", component: () => import("../views/Signin.vue") },
-    {
-      path: "/feed",
-      component: () => import("../views/Feed.vue"),
-      meta: {
-        requiresAuth: true,
-      },
-    },
-  ],
-});
+router.beforeEach((to, from, next) => {
+  if (to.path === '/login' && auth.currentUser) {
+    next('/')
+    return;
+  }
 
-const getCurrentUser = () => { 
-    return new Promise((resolve,reject) => {
-        const removeListener = onAuthStateChanged(
-            getAuth(),
-            (user) => { 
-                removeListener(); 
-                resolve(user);
-            },
-            reject
-        );
-    });
-};
+  if (to.matched.some(record => record.meta.requiresAuth) && !auth.currentUser) {
+    next('/login')
+    return;
+  }
 
+  next();
+})
 
-
-
-router.beforeEach(async(to,from,next) => { 
-    if(to.matched.some((record) => record.meta.requiresAuth)) { 
-        if  (await getCurrentUser) { 
-            next(); 
-        } else { 
-            alert ("you dont have access! "); 
-            next("/"); 
-        }
-    }
-
-}); 
-
-export default router;
+export default router
